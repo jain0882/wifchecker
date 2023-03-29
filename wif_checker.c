@@ -220,11 +220,12 @@ bool verifyWIF(char* pStr) {
 
 	char hexChars[148];
 	convertToHex(bytes, 74, hexChars);
-	printf("base58 decoded: %s\n", hexChars);
+	//printf("base58 decoded: %s\n", hexChars);
 	char* pTrimStr = trimZeroFromLeft(hexChars);
-	printf("converted hex: %s\n", pTrimStr);
+	//printf("distance: %ld\n", pTrimStr - hexChars);
 
-	if((pTrimStr - hexChars) < 74) {
+	if((pTrimStr - hexChars) > 74 || pTrimStr == NULL) {
+		//printf("pTrimStr - hexChars: %ld %s\n", pTrimStr - hexChars, pTrimStr);
 		return false;
 	}
 
@@ -247,7 +248,7 @@ bool verifyWIF(char* pStr) {
         	sprintf(firstHash + (i * 2), "%02x", hash[i]);
     	}
 
-	printf("First Hash: %s\n", firstHash);
+	//printf("First Hash: %s\n", firstHash);
 	unsigned char hash_1[SHA256_DIGEST_LENGTH];
     	SHA256_CTX sha256_1;
     	SHA256_Init(&sha256_1);
@@ -283,7 +284,7 @@ void threadTask(void* pArgs)
 		}
 		char part1[6];
 		fscanf(pThreadArgs->pFile1, "%s", part1);
-		printf("part1: %s\n", part1);
+		//printf("part1: %s\n", part1);
 		pthread_mutex_unlock(pThreadArgs->pMutexFile1);
 		
 		
@@ -297,7 +298,7 @@ void threadTask(void* pArgs)
 
 			char part2[5];
 			fscanf(pThreadArgs->pFile2, "%s", part2);
-			printf("part2: %s\n", part2);
+			//printf("part2: %s\n", part2);
 
 			fseek(pThreadArgs->pFile3, 0, SEEK_SET);
 
@@ -308,7 +309,7 @@ void threadTask(void* pArgs)
 				}
 				char part3[4];
 				fscanf(pThreadArgs->pFile3, "%s", part3);
-				printf("part3: %s\n", part3);
+				//printf("part3: %s\n", part3);
 
 				char str[53];
 				memcpy(str, part1, 5);
@@ -316,7 +317,7 @@ void threadTask(void* pArgs)
 				memcpy(str + 9, part3, 3);
 				memcpy(str + 12, pSuffix, 40);
 				str[52] = '\0';
-				printf("Complete String: %s\n", str);
+				//printf("Complete String: %s\n", str);
 				if(verifyWIF(str)) {
 					pthread_mutex_lock(pThreadArgs->pMutexOutputFile);
 					fprintf(pThreadArgs->pFileOutput, "%s\n", str);
